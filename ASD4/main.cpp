@@ -17,6 +17,7 @@ struct wezelBST
 wezelBST* szukaj(wezelBST* korzen, string wyraz, wezelBST* poprzednik = NULL);
 void usun(wezelBST* korzen, string element);
 void dodaj(wezelBST* korzen, wezelBST *element);
+wezelBST* znajdzNastepnika(wezelBST* wezel);
 
 int main()
 {
@@ -79,15 +80,26 @@ void usun(wezelBST* korzen, string element)
 
 	if (wyszukany->prawy == NULL && wyszukany->lewy == NULL)
 	{
-
+		if (poprzedni->lewy == wyszukany)
+			poprzedni->lewy = NULL;
+		else
+			poprzedni->prawy = NULL;
 	}
 	else if (wyszukany->prawy != NULL && wyszukany->lewy != NULL)
 	{
-
+		wezelBST* nastepnik = znajdzNastepnika(wyszukany);
+		if (nastepnik->prawy != NULL)
+		{
+			wezelBST* prawy = nastepnik->prawy;
+			usun(korzen, nastepnik->key);
+		}
 	}
 	else if (wyszukany->prawy != NULL || wyszukany->lewy != NULL)
 	{
-
+		if (poprzedni->lewy->key == wyszukany->key)
+			poprzedni->lewy = wyszukany->prawy != NULL ? wyszukany->prawy : wyszukany->lewy;
+		else
+			poprzedni->prawy = wyszukany->prawy != NULL ? wyszukany->prawy : wyszukany->lewy;
 	}
 }
 wezelBST* szukaj(wezelBST* korzen, string wyraz, wezelBST* poprzednik = NULL)
@@ -125,5 +137,14 @@ wezelBST* szukaj(wezelBST* korzen, string wyraz, wezelBST* poprzednik = NULL)
 	return obecny;
 }
 
+wezelBST* znajdzNastepnika(wezelBST* wezel)
+{
+	if (wezel->lewy != NULL)
+		return znajdzNastepnika(wezel->lewy);
 
+	return wezel;
+
+	if (wezel->prawy != NULL)
+		return znajdzNastepnika(wezel->prawy);
+}
 
