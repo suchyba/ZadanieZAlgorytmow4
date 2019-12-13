@@ -1,15 +1,10 @@
 #include <iostream>
 #include <string>
+#include "BCDstruct.h"
 
 using namespace std;
 
-struct wezelBST
-{
-	string key;
-	wezelBST* lewy;
-	wezelBST* prawy;
-	wezelBST* tlumaczenie;
-};
+
 
 void dodaj(wezelBST* korzen, wezelBST* element);
 void usun(wezelBST* korzen, string element);
@@ -22,19 +17,26 @@ void dodaj(wezelBST* korzen, wezelBST* element)
 	wezelBST* obecny = korzen;
 	wezelBST* poprzedni = korzen;
 	int prawaLewa = -1;				// 1 - prawa, 2 - lewa
+	bool jednakowe = false;
 	while (obecny)
 	{
 		string dluzszy = element->key.size() > obecny->key.size() ? element->key : obecny->key;
 		for (int i = 0; i < dluzszy.size(); ++i)
 		{
-			if (i >= element->key.size() || element->key[i] > obecny->key[i])
+			if (element->key.size() == obecny->key.size() && i + 1 >= obecny->key.size() && obecny->key[i] == element->key[i])
+			{
+				jednakowe = true;
+				prawaLewa = -1;
+				break;
+			}
+			else if (i >= obecny->key.size() || element->key[i] > obecny->key[i])
 			{
 				poprzedni = obecny;
 				obecny = obecny->prawy;
 				prawaLewa = 1;
 				break;
 			}
-			else if (i >= obecny->key.size() || obecny->key[i] > element->key[i])
+			else if (i >= element->key.size() || obecny->key[i] > element->key[i])
 			{
 				poprzedni = obecny;
 				obecny = obecny->lewy;
@@ -42,6 +44,8 @@ void dodaj(wezelBST* korzen, wezelBST* element)
 				break;
 			}
 		}
+		if (jednakowe)
+			break;
 	}
 	if (prawaLewa == 1)
 		poprzedni->prawy = element;

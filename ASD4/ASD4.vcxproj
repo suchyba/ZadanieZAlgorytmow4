@@ -125,9 +125,13 @@
   <ItemGroup>
     <ClCompile Include="BCD.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Wypisywanie.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BCD.h" />
+    <ClInclude Include="BCDstruct.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="Wypisywanie.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,6 +4,9 @@
 #include <vector>
 #include <fstream>
 #include "BCD.h"
+#include "main.h"
+#include "BCDstruct.h"
+#include "Wypisywanie.h"
 
 using namespace std;
 
@@ -20,7 +23,21 @@ int main()
 	{
 		string ciag;
 		plikIn >> ciag;
+
+		if (!ang)
+		{
+			ang = new wezelBST;
+			ang->key = ciag;
+		}
+		else
+		{
+			wezelBST* w = new wezelBST();
+			w->key = ciag;
+
+			dodaj(ang, w);
+		}
 	}
+	porzadekKLP_Plik(ang, &plikOut);
 
 	plikIn.close();
 	plikOut.close();

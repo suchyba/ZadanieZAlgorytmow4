@@ -2,10 +2,9 @@
 
 #include <string>
 #include "BCD.h"
+#include "BCDstruct.h"
 
 using namespace std;
-
-struct wezelBST;
 
 wezelBST* szukaj(wezelBST* korzen, string wyraz, wezelBST* poprzednik = NULL);
 void usun(wezelBST* korzen, string element);
