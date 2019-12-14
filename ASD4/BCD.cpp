@@ -7,9 +7,12 @@ using namespace std;
 
 
 void dodaj(wezelBST* korzen, wezelBST* element);
-void usun(wezelBST* korzen, string element);
-wezelBST* szukaj(wezelBST* korzen, string wyraz, wezelBST* poprzednik = NULL);
+int usun(wezelBST* korzen, string element);
+wezelBST* szukaj(wezelBST* korzen, string wyraz, wezelBST** poprzednik);
 wezelBST* znajdzNastepnika(wezelBST* wezel);
+wezelBST* usunKorzen(wezelBST* korzenw);
+wezelBST* znajdzNajmniejszy(wezelBST* wezel);
+
 
 
 void dodaj(wezelBST* korzen, wezelBST* element)
@@ -51,16 +54,23 @@ void dodaj(wezelBST* korzen, wezelBST* element)
 		poprzedni->prawy = element;
 	else if (prawaLewa == 2)
 		poprzedni->lewy = element;
-	else
-		cout << "BLAD!!! ELEMENTY SA JEDNAKOWE" << endl;
+	/*else
+		cout << "BLAD!!! ELEMENTY SA JEDNAKOWE" << endl;*/
 }
 
-void usun(wezelBST* korzen, string element)
+int usun(wezelBST* korzen, string element)
 {
-	wezelBST* poprzedni = NULL;
-	wezelBST* wyszukany = szukaj(korzen, element, poprzedni);
+	wezelBST** poprzedniW = new wezelBST*;
+	(*poprzedniW) = NULL;
+	wezelBST* wyszukany = szukaj(korzen, element, poprzedniW);
+	wezelBST* poprzedni = *poprzedniW;
 	if (wyszukany == NULL)
-		return;
+		return -1;
+	if (!poprzedni)
+	{
+		//cout << "Nie mozna usunac korzenia!" << endl;
+		return -2;
+	}
 
 	if (wyszukany->prawy == NULL && wyszukany->lewy == NULL)
 	{
@@ -75,38 +85,65 @@ void usun(wezelBST* korzen, string element)
 
 		usun(korzen, nastepnik->key);
 
-		if (poprzedni->lewy->key == wyszukany->key)
+		if (poprzedni->lewy && poprzedni->lewy->key == wyszukany->key)
 			poprzedni->lewy = nastepnik;
 		else
-			poprzedni->prawy = nastepnik;						/// tu mo¿e nie dzia³aæ		
+			poprzedni->prawy = nastepnik;						
+
+		nastepnik->lewy = wyszukany->lewy;					
+		nastepnik->prawy = wyszukany->prawy;				
 	}
 	else if (wyszukany->prawy != NULL || wyszukany->lewy != NULL)
 	{
-		if (poprzedni->lewy->key == wyszukany->key)
-			poprzedni->lewy = wyszukany->prawy != NULL ? wyszukany->prawy : wyszukany->lewy;
-		else
-			poprzedni->prawy = wyszukany->prawy != NULL ? wyszukany->prawy : wyszukany->lewy;
+		if (poprzedni->lewy && poprzedni->lewy->key == wyszukany->key)
+			poprzedni->lewy = (wyszukany->prawy != NULL ? wyszukany->prawy : wyszukany->lewy);
+		else if(poprzedni ->prawy && poprzedni->prawy->key == wyszukany->key)
+			poprzedni->prawy = (wyszukany->prawy != NULL ? wyszukany->prawy : wyszukany->lewy);
 	}
+	return 0;
 }
 
-wezelBST* szukaj(wezelBST* korzen, string wyraz, wezelBST* poprzednik)
+wezelBST* usunKorzen(wezelBST* korzen)
+{
+	if (korzen->prawy == NULL && korzen->lewy == NULL)
+	{
+		return NULL;
+	}
+	else if (korzen->prawy != NULL && korzen->lewy != NULL)			
+	{
+		wezelBST* nastepnik = znajdzNastepnika(korzen);
+
+		usun(korzen, nastepnik->key);	
+		
+		nastepnik->lewy = korzen->lewy;
+		nastepnik->prawy = korzen->prawy;
+		return nastepnik;
+	}
+	else if (korzen->prawy != NULL || korzen->lewy != NULL)
+	{
+		return (korzen->prawy != NULL ? korzen->prawy : korzen->lewy);
+	}	   	 
+}
+
+wezelBST* szukaj(wezelBST* korzen, string wyraz, wezelBST** poprzednik)
 {
 	wezelBST* obecny = korzen;
-	wezelBST* poprzedni = korzen;
+	wezelBST* poprzedni = NULL;
 	bool rozniaSie = false;
 	while (obecny)
 	{
+		rozniaSie = false;
 		string dluzszy = wyraz.size() > obecny->key.size() ? wyraz : obecny->key;
 		for (int i = 0; i < dluzszy.size(); ++i)
 		{
-			if (i >= wyraz.size() || wyraz[i] > obecny->key[i])
+			if (i >= obecny->key.size() || wyraz[i] > obecny->key[i])
 			{
 				poprzedni = obecny;
 				obecny = obecny->prawy;
 				rozniaSie = true;
 				break;
 			}
-			else if (i >= obecny->key.size() || obecny->key[i] > wyraz[i])
+			else if (i >= wyraz.size() || obecny->key[i] > wyraz[i])
 			{
 				poprzedni = obecny;
 				obecny = obecny->lewy;
@@ -116,21 +153,54 @@ wezelBST* szukaj(wezelBST* korzen, string wyraz, wezelBST* poprzednik)
 		}
 		if (!rozniaSie)
 		{
-			poprzednik = poprzedni;
+			(*poprzednik) = poprzedni;
 			return obecny;
 		}
 	}
-	poprzednik = poprzedni;
+	(*poprzednik) = poprzedni;
 	return obecny;
 }
-
+wezelBST* szukaj(wezelBST* korzen, string wyraz)
+{
+	wezelBST* obecny = korzen;
+	bool rozniaSie = false;
+	while (obecny)
+	{
+		rozniaSie = false;
+		string dluzszy = wyraz.size() > obecny->key.size() ? wyraz : obecny->key;
+		for (int i = 0; i < dluzszy.size(); ++i)
+		{
+			if (i >= obecny->key.size() || wyraz[i] > obecny->key[i])
+			{
+				obecny = obecny->prawy;
+				rozniaSie = true;
+				break;
+			}
+			else if (i >= wyraz.size() || obecny->key[i] > wyraz[i])
+			{
+				obecny = obecny->lewy;
+				rozniaSie = true;
+				break;
+			}
+		}
+		if (!rozniaSie)
+		{
+			return obecny;
+		}
+	}
+	return obecny;
+}
 wezelBST* znajdzNastepnika(wezelBST* wezel)
 {
-	if (wezel->lewy != NULL)
-		return znajdzNastepnika(wezel->lewy);
+	if (wezel->prawy)
+		return znajdzNajmniejszy(wezel->prawy);
+	else
+		return NULL;
+}
+wezelBST* znajdzNajmniejszy(wezelBST* wezel)
+{
+	if (wezel->lewy)
+		return znajdzNajmniejszy(wezel->lewy);
 
-	return wezel;
-
-	if (wezel->prawy != NULL)
-		return znajdzNastepnika(wezel->prawy);
+	return wezel;	
 }

@@ -125,12 +125,14 @@
   <ItemGroup>
     <ClCompile Include="BCD.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Wypisywanie.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BCD.h" />
     <ClInclude Include="BCDstruct.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Wypisywanie.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

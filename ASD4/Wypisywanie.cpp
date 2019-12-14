@@ -9,18 +9,35 @@ using namespace std;
 void porzadekKLP(wezelBST* wezel)
 {
 	if(wezel)
-		cout << wezel->key << "\n" << endl;
+		cout << wezel->key <<  endl;
 	if(wezel->lewy)
 		porzadekKLP(wezel->lewy);
 	if(wezel->prawy)
 		porzadekKLP(wezel->prawy);
+}
+void porzadekKLP_tlumaczenia(wezelBST* wezel)
+{
+	if (wezel)
+	{
+		cout << wezel->key << "\t\t\t" << wezel->tlumaczenie->key << endl;
+
+		if (wezel->lewy )
+			porzadekKLP_tlumaczenia(wezel->lewy);
+		if (wezel->prawy)
+			porzadekKLP_tlumaczenia(wezel->prawy);
+	}
+	else
+	{
+		cout << "Drzewo jest puste!!!" << endl;
+		return;
+	}
 }
 void porzadekLKP(wezelBST* wezel)
 {
 	if (wezel->lewy)
 		porzadekLKP(wezel->lewy);
 	if (wezel)
-		cout << wezel->key << "\n" << endl;
+		cout << wezel->key << endl;
 	if (wezel->prawy)
 		porzadekLKP(wezel->prawy);
 }
